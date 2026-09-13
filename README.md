@@ -1,148 +1,172 @@
 # git_test
 
-这个仓库用于**全面练习与演示 Git 常用操作**以及**GitHub 常用功能**。
+这个仓库用于直接演示 **Git 与 GitHub 常用操作**，并给出一个典型 **C++ GitHub 仓库结构**示例。
 
-## 1. Git 常用操作练习清单
+## 1. Git 常用操作（命令演示）
 
-> 建议按顺序练习，每一步都用 `git status` 和 `git log --oneline --graph --decorate -n 10` 观察变化。
-
-### 1.1 基础配置与初始化
+### 1.1 初始化与基础配置
 
 ```bash
 git config --global user.name "your_name"
 git config --global user.email "your_email@example.com"
 git clone <your_repo_url>
 cd git_test
+git status
 ```
 
-### 1.2 文件生命周期
+### 1.2 提交代码（add / commit）
 
 ```bash
 echo "hello git" > demo.txt
-git status
 git add demo.txt
 git commit -m "feat: add demo.txt"
-git rm demo.txt
-git commit -m "chore: remove demo.txt"
+git log --oneline -n 5
 ```
 
-### 1.3 分支与合并
+### 1.3 分支开发与合并（branch / merge）
 
 ```bash
-git switch -c feature/demo-branch
-echo "feature work" > feature.txt
-git add feature.txt
-git commit -m "feat: add feature work"
+git switch -c feature/demo
+echo "feature line" >> demo.txt
+git add demo.txt
+git commit -m "feat: update demo in feature branch"
 git switch main
-git merge feature/demo-branch
+git merge feature/demo
 ```
 
-### 1.4 变基（rebase）
+### 1.4 线性历史（rebase）
 
 ```bash
 git switch -c feature/rebase-demo
-echo "rebase line" >> README.md
+echo "rebase change" >> README.md
 git add README.md
-git commit -m "docs: add rebase line"
+git commit -m "docs: rebase demo commit"
 git switch main
-echo "main line" >> README.md
+echo "main change" >> README.md
 git add README.md
-git commit -m "docs: add main line"
+git commit -m "docs: main branch change"
 git switch feature/rebase-demo
 git rebase main
 ```
 
-### 1.5 暂存现场（stash）
+### 1.5 临时保存工作区（stash）
 
 ```bash
-echo "wip change" >> wip.txt
-git stash push -m "wip: stash demo"
+echo "wip" >> wip.txt
+git stash push -m "wip: temp save"
 git stash list
 git stash pop
 ```
 
-### 1.6 回滚与修复
+### 1.6 回退与恢复（revert / reset / reflog）
 
 ```bash
 git revert <commit_sha>
 git reset --soft HEAD~1
-git reset --hard HEAD~1
+git reflog
 ```
 
-> ⚠️ `reset --hard` 会丢弃工作区修改，练习时请谨慎。
+> `git reset --hard` 会直接丢弃未保存改动，谨慎使用。
 
-### 1.7 标签与发布
+### 1.7 标签与发布版本（tag）
 
 ```bash
-git tag v0.1.0
-git tag -a v0.1.1 -m "annotated tag"
-git push origin v0.1.0
+git tag -a v1.0.0 -m "release v1.0.0"
+git push origin v1.0.0
+git tag --list
 ```
 
-### 1.8 挑选提交（cherry-pick）
+### 1.8 选择性摘取提交（cherry-pick）
 
 ```bash
 git cherry-pick <commit_sha>
 ```
 
----
+## 2. GitHub 常用操作（流程演示）
 
-## 2. GitHub 常用功能演示清单
+### 2.1 Issue 与需求管理
 
-### 2.1 Issue 管理
-- 创建 Issue（Bug / Feature Request）
-- 添加 Label、Assignee、Milestone
-- 使用关键字关联 PR（例如：`Closes #1`）
+```text
+1) 在 GitHub 创建 Issue（Bug / Feature）。
+2) 设置 Label、Assignee、Milestone。
+3) 在 PR 描述中写 "Closes #<issue_number>" 自动关闭 Issue。
+```
 
-### 2.2 Pull Request 流程
-1. 从功能分支推送代码
-2. 发起 PR 并填写变更说明
-3. 请求 Reviewer
-4. 根据 Review Comment 修改并追加提交
-5. CI 通过后 Merge
-
-### 2.3 Code Review 常用动作
-- 添加行级评论（Line Comment）
-- 发起 `Approve` / `Request changes`
-- 对评论逐条回复并标记已解决
-
-### 2.4 GitHub Actions（CI）
-- 查看 workflow run 状态
-- 查看失败 job 日志并定位问题
-- 修复后重新触发 workflow
-
-### 2.5 Releases
-- 基于 tag 创建 Release
-- 填写 Release Notes
-- 附件上传（可选）
-
-### 2.6 Discussions / Wiki（可选）
-- 使用 Discussions 做问答和提案讨论
-- 使用 Wiki 记录项目文档
-
----
-
-## 3. 推荐完整演练流程（端到端）
-
-1. 新建分支：`git switch -c feature/practice-flow`
-2. 修改任意文件并提交：`git commit -m "feat: practice flow step 1"`
-3. 推送分支并创建 PR
-4. 在 PR 中触发 Review 与 CI
-5. 根据反馈再次提交
-6. 合并 PR
-7. 打 tag 并创建 Release
-8. 在 Issue 中验证关闭状态
-
----
-
-## 4. 常用排查命令速查
+### 2.2 Pull Request 协作流程
 
 ```bash
-git status
-git log --oneline --graph --decorate --all -n 20
-git reflog
-git diff
-git diff --staged
-git branch -vv
-git remote -v
+git switch -c feature/pr-demo
+echo "pr demo" > pr_demo.txt
+git add pr_demo.txt
+git commit -m "feat: add PR demo file"
+git push -u origin feature/pr-demo
 ```
+
+```text
+然后在 GitHub 页面发起 PR，填写变更说明，请求 Review，等待 CI 通过后合并。
+```
+
+### 2.3 Code Review 常见动作
+
+```text
+- Reviewer: Add comment / Request changes / Approve
+- Author: 回复评论，提交修复 commit，再次请求 review
+- 合并前确认 conversation resolved + checks passed
+```
+
+### 2.4 GitHub Actions（CI）
+
+```text
+在 PR 页面查看 Checks：
+- 绿色：通过
+- 红色：失败，进入对应 job 查看日志并修复后再次 push
+```
+
+### 2.5 Release 发布
+
+```text
+1) 推送 tag（如 v1.0.0）
+2) 在 GitHub Releases 页面创建 release
+3) 填写 release notes 并发布
+```
+
+## 3. 一个常见的 C++ GitHub 仓库结构
+
+```text
+cpp-project/
+├─ .github/
+│  └─ workflows/
+│     └─ ci.yml
+├─ include/
+│  └─ project/
+│     └─ calculator.h
+├─ src/
+│  ├─ calculator.cpp
+│  └─ main.cpp
+├─ tests/
+│  └─ test_calculator.cpp
+├─ docs/
+│  └─ design.md
+├─ CMakeLists.txt
+├─ README.md
+├─ LICENSE
+└─ .gitignore
+```
+
+对应最小 CMake 启动方式通常是：
+
+```bash
+mkdir -p build
+cd build
+cmake ..
+cmake --build .
+ctest --output-on-failure
+```
+
+## 4. Git 与 GitHub 常用知识（简明版）
+
+- Git 是本地版本控制，GitHub 是远程托管与协作平台。
+- 日常最常用命令：`status`、`add`、`commit`、`switch`、`merge`、`rebase`、`log`、`diff`。
+- 协作主线：Issue -> 分支开发 -> PR -> Review -> CI -> Merge -> Tag/Release。
+- 提交信息建议使用清晰前缀：`feat:` `fix:` `docs:` `refactor:` `test:` `chore:`。
+- 遇到历史问题先看：`git log --oneline --graph --decorate --all` 与 `git reflog`。
